@@ -363,6 +363,13 @@ function calRender() {
     let igPlanned = [], ytPlanned = [];
     if (calCurrentFilter !== 'yt') {
       igPlanned = (gcalSignedIn ? gcalGetIgPlanned() : (JSON.parse(localStorage.getItem(CAL_KEY)||'[]'))).filter(p => p.date === ds);
+      // Se la coda reale del backend è caricata, i post ad auto-pubblicazione (✅) li
+      // prendo da lì: valgono per ogni dispositivo e anche per quelli mandati dal bot
+      // Telegram. Il promemoria locale ✅ resterebbe un doppione (o mancherebbe del tutto
+      // su un altro dispositivo), quindi lo nascondo.
+      if (Array.isArray(window.publishQueueItems)) {
+        igPlanned = igPlanned.filter(p => !(/✅/.test(p.title || '') || /Pubblicazione automatica/i.test(p.notes || '')));
+      }
       // Deduplicazione: nascondo il pianificato se esiste un post pubblicato corrispondente su IG
       igPlanned = igPlanned.filter(p => {
         const cleanPlan = cleanStringForMatch(p.title);
@@ -432,6 +439,21 @@ function calRender() {
         onclick="calEditPlanned(event,'${escId(p.id)}','ig')"
         title="${isAutoPub ? '✅ Pubblicazione automatica · ' : ''}IG · ${esc(p.time||'')} ${safeTitle} (trascina per spostare)">${calPostChip('ig', p.type, (p.time?esc(p.time.slice(0,5))+' ':'')+safeTitle)}</div>`;
     });
+    // Post in coda di pubblicazione automatica (backend), non ancora usciti.
+    if (calCurrentFilter !== 'yt' && Array.isArray(window.publishQueueItems)) {
+      window.publishQueueItems
+        .filter(q => q.status !== 'published' && q.scheduledAt && calDateStr(new Date(q.scheduledAt)) === ds)
+        .forEach(q => {
+          const d = new Date(q.scheduledAt);
+          const hhmm = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+          const firstLine = String(q.caption || '').replace(/\s*\[COLLAB:[^\]]+\]/, '').split('\n').find(s => s.trim()) || 'Post programmato';
+          const label = esc(calShortTitle(firstLine));
+          const stato = q.status === 'error' ? '⚠️ ' : '✅ ';
+          posts += `<div class="cal-post plan ${esc(q.mediaType || 'IMAGE')} autopub"
+            onclick="document.getElementById('queueList')?.scrollIntoView({behavior:'smooth',block:'center'})"
+            title="Coda di pubblicazione automatica · IG · ${esc(hhmm)} ${label}${q.status === 'error' ? ' · errore' : ''}">${calPostChip('ig', q.mediaType || 'IMAGE', esc(hhmm) + ' ' + stato + label)}</div>`;
+        });
+    }
     ytPlanned.forEach(p => {
       const hostSuffix = p.host ? ` · Host: ${esc(p.host||'')}` : '';
       const safeTitle = esc(p.title||'');

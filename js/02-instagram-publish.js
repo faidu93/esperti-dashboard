@@ -376,6 +376,10 @@ function renderPublishQueue(queue) {
   const box = document.getElementById('queueList');
   if (!box) return;
 
+  // Il calendario mostra anche i post in coda: gli passo la coda e lo ridisegno.
+  window.publishQueueItems = Array.isArray(queue) ? queue : [];
+  if (typeof calRender === 'function') { try { calRender(); } catch (e) { console.warn('calRender dopo la coda:', e); } }
+
   // Avviso PROATTIVO: prima un post in errore si vedeva solo aprendo il tab
   // Calendario e scorrendo fino alla coda — capitava di accorgersene solo
   // dopo, a mancata pubblicazione già avvenuta. Ora, appena la coda viene
