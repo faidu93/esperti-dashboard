@@ -199,11 +199,41 @@ function cloudinarySetupPrompt() {
 // Upload di un file su Supabase Storage tramite signed URL (bypass limite Vercel)
 // Per file >45MB usa automaticamente Cloudinary.
 // Flusso Supabase: 1) backend genera URL firmato → 2) PUT diretto al bucket
+// L'API di Instagram pubblica solo immagini JPEG: un PNG (o WebP, HEIC…) caricato così
+// com'è fa fallire la pubblicazione. Qui ogni immagine non JPEG diventa un JPEG di qualità
+// 0.92 con le stesse dimensioni, prima dell'upload. Le parti trasparenti diventano bianche.
+async function ensureJpeg(file) {
+  const isJpeg = /^image\/jpe?g$/i.test(file.type || '') || /\.jpe?g$/i.test(file.name || '');
+  if (isJpeg) return file;
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch (e) {
+    throw new Error(`Non riesco a convertire «${file.name}» in JPEG: salvala come JPEG e ricaricala.`);
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bitmap, 0, 0);
+  if (bitmap.close) bitmap.close();
+  const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.92));
+  if (!blob) throw new Error(`Conversione in JPEG non riuscita per «${file.name}».`);
+  const name = (file.name || 'immagine').replace(/\.[^.]+$/, '') + '.jpg';
+  return new File([blob], name, { type: 'image/jpeg' });
+}
+
 async function uploadMediaToSupabase(file, onProgress) {
   const secret = await getPublishSecret();
   if (!secret) throw new Error('Password di pubblicazione mancante.');
 
   const isVideo = (file.type || '').startsWith('video') || /\.(mp4|mov|m4v|webm|mkv)$/i.test(file.name || '');
+  if (!isVideo) {
+    if (onProgress) onProgress(2, 'Conversione in JPEG…');
+    file = await ensureJpeg(file);
+  }
 
   // File >45MB → carica automaticamente su Cloudinary (gratuito, fino a ~100MB)
   if (file.size > 45 * 1024 * 1024) {
