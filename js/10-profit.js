@@ -93,8 +93,8 @@ const DIREZIONALE_FISSI = { Nic: 700, Marco: 570, Frenk: 570, Lerry: 570 };
 // Quota del Profeta, già saldata (novembre 2026): non cambia, nemmeno se cambiano gli iscritti.
 const QUOTA_PROFETA_FISSA = 696;
 const QUOTA_ESPERTI_FISSA = 1315; // come da foglio «Valutazioni esperti 2026/27» (totale compensi)
-// Totale fisso del Direzionale (quote per persona 2.410 € + 5,50 € di avanzo, come al 9/11/2026).
-const QUOTA_DIREZIONALE_FISSA = 2415.5;
+// Totale fisso del Direzionale: quanto è stato davvero saldato (Nic 700 + Marco, Frenk e Lerry 570).
+const QUOTA_DIREZIONALE_FISSA = 2410;
 const PROFIT_SPLIT = {
   iscrizioni: { profeta: 0.20, direzionale: 0.50, esperti: 0.50 },
   aste:       { profeta: 0,    direzionale: 1,    esperti: 0 },
