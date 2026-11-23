@@ -90,6 +90,8 @@ const QUOTA_ASTE_ESPERTI = 200;
 const DIREZIONALE_FISSI = { Nic: 700, Marco: 570, Frenk: 570, Lerry: 570 };
 // Quota fissa degli Esperti (deciso il 24/11/2026): non cambia con i costi. Se i costi
 // scendono, la differenza va nella riserva per il prossimo anno.
+// Quota del Profeta, già saldata (novembre 2026): non cambia, nemmeno se cambiano gli iscritti.
+const QUOTA_PROFETA_FISSA = 696;
 const QUOTA_ESPERTI_FISSA = 1315; // come da foglio «Valutazioni esperti 2026/27» (totale compensi)
 // Totale fisso del Direzionale (quote per persona 2.410 € + 5,50 € di avanzo, come al 9/11/2026).
 const QUOTA_DIREZIONALE_FISSA = 2415.5;
@@ -268,11 +270,12 @@ function renderProfitContent(d) {
   // (o in meno, per esempio se i costi cambiano) viene spostato nella riserva con una riga
   // dedicata, così la tabella resta coerente.
   const adeguaEsperti = QUOTA_ESPERTI_FISSA - righeSplit.reduce((sum, r) => sum + r.parti.esperti, 0);
+  const adeguaProfeta = QUOTA_PROFETA_FISSA - righeSplit.reduce((sum, r) => sum + r.parti.profeta, 0);
   const adeguaDirezionale = QUOTA_DIREZIONALE_FISSA - righeSplit.reduce((sum, r) => sum + r.parti.direzionale, 0);
-  if (Math.abs(adeguaEsperti) > 0.005 || Math.abs(adeguaDirezionale) > 0.005) {
+  if (Math.abs(adeguaEsperti) > 0.005 || Math.abs(adeguaDirezionale) > 0.005 || Math.abs(adeguaProfeta) > 0.005) {
     righeSplit.push({ label: '🏦 Alla riserva', totale: 0, segno: 1, regola: { profeta: 0, direzionale: 0, esperti: 0 },
-      nota: `Quote fisse (Direzionale ${fmtEuro(QUOTA_DIREZIONALE_FISSA)}€, Esperti ${fmtEuro(QUOTA_ESPERTI_FISSA)}€): la differenza va nella riserva`,
-      parti: { profeta: 0, direzionale: adeguaDirezionale, esperti: adeguaEsperti } });
+      nota: `Quote fisse (Profeta ${fmtEuro(QUOTA_PROFETA_FISSA)}€, Direzionale ${fmtEuro(QUOTA_DIREZIONALE_FISSA)}€, Esperti ${fmtEuro(QUOTA_ESPERTI_FISSA)}€): la differenza va nella riserva`,
+      parti: { profeta: adeguaProfeta, direzionale: adeguaDirezionale, esperti: adeguaEsperti } });
   }
   const quota = Object.fromEntries(PARTI.map(k => [k, righeSplit.reduce((sum, r) => sum + r.parti[k], 0)]));
   const quotaDirezionale = quota.direzionale;
