@@ -49,17 +49,17 @@ const PROFIT_COSTI = [
   { mese: 'Novembre 2026', descrizione: 'ChatGPT', importo: 23 },
   { mese: 'Novembre 2026', descrizione: 'Quota mancante (da ritrovare)', importo: 20 },
   { mese: 'Novembre 2026', descrizione: 'Claude', importo: 22 },
-  // Previsti fino ad aprile 2027: solo gli abbonamenti che continuano (ChatGPT 23 €/mese,
+  // Previsti fino ad aprile 2027: solo gli abbonamenti che continuano (ChatGPT 8 €/mese dal rinnovo di dicembre 2026 (nuovo abbonamento; prima 23 €),
   // Claude 22 €/mese). Streamyard, Editor e Fantalab non rientrano.
-  { mese: 'Dicembre 2026', descrizione: 'ChatGPT', importo: 23, previsto: true },
+  { mese: 'Dicembre 2026', descrizione: 'ChatGPT', importo: 8, previsto: true },
   { mese: 'Dicembre 2026', descrizione: 'Claude', importo: 22, previsto: true },
-  { mese: 'Gennaio 2027', descrizione: 'ChatGPT', importo: 23, previsto: true },
+  { mese: 'Gennaio 2027', descrizione: 'ChatGPT', importo: 8, previsto: true },
   { mese: 'Gennaio 2027', descrizione: 'Claude', importo: 22, previsto: true },
-  { mese: 'Febbraio 2027', descrizione: 'ChatGPT', importo: 23, previsto: true },
+  { mese: 'Febbraio 2027', descrizione: 'ChatGPT', importo: 8, previsto: true },
   { mese: 'Febbraio 2027', descrizione: 'Claude', importo: 22, previsto: true },
-  { mese: 'Marzo 2027', descrizione: 'ChatGPT', importo: 23, previsto: true },
+  { mese: 'Marzo 2027', descrizione: 'ChatGPT', importo: 8, previsto: true },
   { mese: 'Marzo 2027', descrizione: 'Claude', importo: 22, previsto: true },
-  { mese: 'Aprile 2027', descrizione: 'ChatGPT', importo: 23, previsto: true },
+  { mese: 'Aprile 2027', descrizione: 'ChatGPT', importo: 8, previsto: true },
   { mese: 'Aprile 2027', descrizione: 'Claude', importo: 22, previsto: true },
 ];
 
