@@ -23,8 +23,8 @@ const FANTALISTONE_NON_PAGANTI = 1;
 // economico). Quando si paga qualcuno, aggiungi una riga qui.
 const PAYPAL_QUOTE_PAGATE = [
   { mese: 'Novembre 2026', chi: 'Profeta', importo: 696 },
-  { mese: 'Novembre 2026', chi: 'Lerry', importo: 700 },
-  { mese: 'Novembre 2026', chi: 'Nic', importo: 570 },
+  { mese: 'Novembre 2026', chi: 'Nic', importo: 700 },
+  { mese: 'Novembre 2026', chi: 'Lerry', importo: 570 },
   { mese: 'Novembre 2026', chi: 'Marco', importo: 570 },
   { mese: 'Novembre 2026', chi: 'Frenk', importo: 570 },
 ];
