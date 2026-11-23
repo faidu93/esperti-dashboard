@@ -90,7 +90,7 @@ const QUOTA_ASTE_ESPERTI = 200;
 const DIREZIONALE_FISSI = { Nic: 700, Marco: 570, Frenk: 570, Lerry: 570 };
 // Quota fissa degli Esperti (deciso il 24/11/2026): non cambia con i costi. Se i costi
 // scendono, la differenza va nella riserva per il prossimo anno.
-const QUOTA_ESPERTI_FISSA = 1315.5;
+const QUOTA_ESPERTI_FISSA = 1315; // come da foglio «Valutazioni esperti 2026/27» (totale compensi)
 // Totale fisso del Direzionale (quote per persona 2.410 € + 5,50 € di avanzo, come al 9/11/2026).
 const QUOTA_DIREZIONALE_FISSA = 2415.5;
 const PROFIT_SPLIT = {
