@@ -88,6 +88,11 @@ const QUOTA_ASTE_ESPERTI = 200;
 // quote fisse a persona; quello che avanza va nella riserva per il prossimo anno,
 // insieme a ogni altro ricavo non distribuito.
 const DIREZIONALE_FISSI = { Nic: 700, Marco: 570, Frenk: 570, Lerry: 570 };
+// Quota fissa degli Esperti (deciso il 24/11/2026): non cambia con i costi. Se i costi
+// scendono, la differenza va nella riserva per il prossimo anno.
+const QUOTA_ESPERTI_FISSA = 1315.5;
+// Totale fisso del Direzionale (quote per persona 2.410 € + 5,50 € di avanzo, come al 9/11/2026).
+const QUOTA_DIREZIONALE_FISSA = 2415.5;
 const PROFIT_SPLIT = {
   iscrizioni: { profeta: 0.20, direzionale: 0.50, esperti: 0.50 },
   aste:       { profeta: 0,    direzionale: 1,    esperti: 0 },
@@ -259,6 +264,16 @@ function renderProfitContent(d) {
     // costi previsti (abbonamenti fino ad aprile): detratti subito, così il conto è "pulito"
     ...(d.totaleCostiPrevisti > 0 ? [{ label: '🔮 Previsti', totale: d.totaleCostiPrevisti, regola: PROFIT_SPLIT.costi, segno: -1 }] : []),
   ].map(r => ({ ...r, parti: Object.fromEntries(PARTI.map(k => [k, (r.override && k in r.override) ? r.override[k] : r.segno * r.totale * r.regola[k]])) }));
+  // Le quote di Esperti e Direzionale sono fisse: quello che il calcolo darebbe in più
+  // (o in meno, per esempio se i costi cambiano) viene spostato nella riserva con una riga
+  // dedicata, così la tabella resta coerente.
+  const adeguaEsperti = QUOTA_ESPERTI_FISSA - righeSplit.reduce((sum, r) => sum + r.parti.esperti, 0);
+  const adeguaDirezionale = QUOTA_DIREZIONALE_FISSA - righeSplit.reduce((sum, r) => sum + r.parti.direzionale, 0);
+  if (Math.abs(adeguaEsperti) > 0.005 || Math.abs(adeguaDirezionale) > 0.005) {
+    righeSplit.push({ label: '🏦 Alla riserva', totale: 0, segno: 1, regola: { profeta: 0, direzionale: 0, esperti: 0 },
+      nota: `Quote fisse (Direzionale ${fmtEuro(QUOTA_DIREZIONALE_FISSA)}€, Esperti ${fmtEuro(QUOTA_ESPERTI_FISSA)}€): la differenza va nella riserva`,
+      parti: { profeta: 0, direzionale: adeguaDirezionale, esperti: adeguaEsperti } });
+  }
   const quota = Object.fromEntries(PARTI.map(k => [k, righeSplit.reduce((sum, r) => sum + r.parti[k], 0)]));
   const quotaDirezionale = quota.direzionale;
   // Quota del Direzionale per persona: importi fissi; l'avanzo va in riserva.
